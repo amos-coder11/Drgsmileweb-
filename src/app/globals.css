@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-noel-green: #1B3022;
+  --color-noel-lime: #DFFF00;
+  --color-noel-bg: #ffffff;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-noel-bg);
+    color: #1B3022;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-noel-lime) 60%, transparent);
+  }
+}
