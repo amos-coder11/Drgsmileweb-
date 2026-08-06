@@ -1,5 +1,5 @@
-import { HeroSection } from "@/components/HeroSection";
+import { HeroToGalleryMorph } from "@/components/HeroToGalleryMorph";
 
 export default function Home() {
-  return <HeroSection />;
+  return <HeroToGalleryMorph />;
 }

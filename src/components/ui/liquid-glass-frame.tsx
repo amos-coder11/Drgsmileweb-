@@ -59,9 +59,17 @@ export function LiquidGlassFrame({
   const shaderSpeed = isLight ? 0.6 : 0.5;
   const hoverSpeed = isLight ? 1.1 : 0.9;
 
+  const frameGradient = isLight
+    ? "linear-gradient(135deg, #2a2a2a 0%, #0a0a0a 50%, #1f1f1f 100%)"
+    : "linear-gradient(135deg, #e8e8e8 0%, #ffffff 35%, #bdbdbd 100%)";
+
   const outerShadow = isHovered
-    ? "0 0 0 1px rgba(0,0,0,0.3), 0 10px 28px rgba(0,0,0,0.14)"
-    : "0 0 0 1px rgba(0,0,0,0.22), 0 6px 20px rgba(0,0,0,0.1)";
+    ? isLight
+      ? "0 0 0 1px rgba(0,0,0,0.3), 0 10px 28px rgba(0,0,0,0.14)"
+      : "0 0 0 1px rgba(255,255,255,0.35), 0 10px 28px rgba(0,0,0,0.45)"
+    : isLight
+      ? "0 0 0 1px rgba(0,0,0,0.22), 0 6px 20px rgba(0,0,0,0.1)"
+      : "0 0 0 1px rgba(255,255,255,0.22), 0 6px 20px rgba(0,0,0,0.35)";
 
   useEffect(() => {
     ensureShaderStyles();
@@ -136,7 +144,7 @@ export function LiquidGlassFrame({
         padding: `${borderWidth}px`,
         boxShadow: outerShadow,
         transition: "box-shadow 0.25s ease",
-        background: "linear-gradient(135deg, #2a2a2a 0%, #0a0a0a 50%, #1f1f1f 100%)",
+        background: frameGradient,
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

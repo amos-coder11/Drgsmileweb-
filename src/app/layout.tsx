@@ -22,18 +22,18 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://noelodontologia.com"),
-  title: "NOEL. Odontología | Diseñamos Sonrisas",
+  metadataBase: new URL("https://drgsmile.com"),
+  title: "DrGsmile | Diseñamos Sonrisas",
   description:
     "Diseñamos sonrisas, transformamos confianza. Odontología estética con tecnología digital 3D.",
   openGraph: {
     type: "website",
     locale: "es_ES",
-    url: "https://noelodontologia.com",
-    siteName: "NOEL. Odontología",
-    title: "NOEL. Odontología | Diseñamos Sonrisas",
+    url: "https://drgsmile.com",
+    siteName: "DrGsmile",
+    title: "DrGsmile | Diseñamos Sonrisas",
     description: "Diseñamos sonrisas, transformamos confianza.",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "NOEL Odontología" }],
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "DrGsmile" }],
   },
 };
 

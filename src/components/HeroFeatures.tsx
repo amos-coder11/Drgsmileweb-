@@ -63,14 +63,23 @@ export function HeroFeatures() {
     const targets = [mobileRef.current, desktopRef.current].filter(Boolean);
     if (!targets.length) return;
 
-    const tween = gsap.fromTo(
-      targets,
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.9, delay: 0.6, ease: "power3.out" }
-    );
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        targets,
+        { y: 24, opacity: 1 },
+        { y: 0, opacity: 1, duration: 0.85, delay: 0.35, ease: "power3.out" }
+      );
+    });
 
     return () => {
-      tween.kill();
+      ctx.revert();
+      // Garantiza visibilidad si se desmonta a mitad de animación
+      targets.forEach((el) => {
+        if (el) {
+          el.style.opacity = "1";
+          el.style.transform = "none";
+        }
+      });
     };
   }, []);
 
@@ -79,7 +88,7 @@ export function HeroFeatures() {
       {/* Móvil — dos columnas horizontales, centrado abajo */}
       <div
         ref={mobileRef}
-        className="absolute bottom-[clamp(8rem,calc(12vh+4.5rem),10.5rem)] left-[max(1rem,env(safe-area-inset-left))] right-[max(1rem,env(safe-area-inset-right))] z-[50] md:hidden"
+        className="absolute bottom-[clamp(8rem,calc(12vh+4.5rem),10.5rem)] left-[max(1rem,env(safe-area-inset-left))] right-[max(1rem,env(safe-area-inset-right))] z-[50] opacity-100 md:hidden"
       >
         <LiquidGlassFrame variant="light" borderRadius={18} borderWidth={4} className="w-full">
           <div className="flex min-h-[7.5rem] items-stretch">
@@ -98,10 +107,10 @@ export function HeroFeatures() {
         </LiquidGlassFrame>
       </div>
 
-      {/* Desktop — panel vertical a la izquierda (diseño actual) */}
+      {/* Desktop — panel vertical a la izquierda */}
       <div
         ref={desktopRef}
-        className="absolute bottom-8 left-6 z-20 hidden md:block lg:bottom-12 lg:left-14"
+        className="absolute bottom-8 left-6 z-[50] hidden opacity-100 md:block lg:bottom-12 lg:left-14"
       >
         <LiquidGlassFrame
           variant="light"

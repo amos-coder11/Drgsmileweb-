@@ -14,6 +14,7 @@ interface LiquidMetalButtonProps {
   variant?: ButtonVariant;
   ariaLabel?: string;
   alignWithLogo?: boolean;
+  inverted?: boolean;
 }
 
 function useLogoAlignedHeight(enabled: boolean) {
@@ -50,6 +51,7 @@ export function LiquidMetalButton({
   variant = "agenda",
   ariaLabel,
   alignWithLogo = false,
+  inverted = false,
 }: LiquidMetalButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
@@ -90,6 +92,24 @@ export function LiquidMetalButton({
 
   const styles = useMemo(() => {
     if (isAgenda) {
+      if (inverted) {
+        return {
+          innerBg: "linear-gradient(180deg, #ffffff 0%, #f3f3f3 100%)",
+          textColor: "#000000",
+          borderRadius: "8px",
+          shaderRadius: "8px",
+          shaderSpeed: 0.5,
+          hoverSpeed: 0.9,
+          clickSpeed: 2,
+          outerShadow:
+            "0px 0px 0px 1px rgba(255, 255, 255, 0.28), 0px 4px 10px rgba(0, 0, 0, 0.28)",
+          hoverShadow:
+            "0px 0px 0px 1px rgba(255, 255, 255, 0.42), 0px 8px 16px rgba(0, 0, 0, 0.32)",
+          shaderOpacity: 0.9,
+          rippleBg:
+            "radial-gradient(circle, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0) 70%)",
+        };
+      }
       return {
         innerBg: "linear-gradient(180deg, #202020 0%, #000000 100%)",
         textColor: "#ffffff",
@@ -102,6 +122,26 @@ export function LiquidMetalButton({
           "0px 0px 0px 1px rgba(0, 0, 0, 0.3), 0px 4px 8px rgba(0, 0, 0, 0.12)",
         hoverShadow:
           "0px 0px 0px 1px rgba(0, 0, 0, 0.4), 0px 8px 14px rgba(0, 0, 0, 0.18)",
+        shaderOpacity: 0.9,
+        rippleBg:
+          "radial-gradient(circle, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 70%)",
+      };
+    }
+    if (inverted) {
+      return {
+        innerBg: "linear-gradient(180deg, #ffffff 0%, #f3f3f3 100%)",
+        textColor: "#1B3022",
+        borderRadius: "8px",
+        shaderRadius: "8px",
+        shaderSpeed: 0.4,
+        hoverSpeed: 0.8,
+        clickSpeed: 1.8,
+        outerShadow: "0px 0px 0px 1px rgba(255, 255, 255, 0.28), 0px 4px 10px rgba(0, 0, 0, 0.28)",
+        hoverShadow:
+          "0px 0px 0px 1px rgba(255, 255, 255, 0.42), 0px 4px 12px rgba(0, 0, 0, 0.32)",
+        shaderOpacity: 0.55,
+        rippleBg:
+          "radial-gradient(circle, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0) 70%)",
       };
     }
     return {
@@ -114,8 +154,11 @@ export function LiquidMetalButton({
       clickSpeed: 1.8,
       outerShadow: "0px 0px 0px 1px rgba(27, 48, 34, 0.2)",
       hoverShadow: "0px 0px 0px 1px rgba(27, 48, 34, 0.3), 0px 4px 10px rgba(0, 0, 0, 0.06)",
+      shaderOpacity: 0.55,
+      rippleBg:
+        "radial-gradient(circle, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 70%)",
     };
-  }, [isAgenda]);
+  }, [isAgenda, inverted]);
 
   useEffect(() => {
     const styleId = "shader-canvas-style-exploded";
@@ -176,7 +219,7 @@ export function LiquidMetalButton({
       shaderMount.current?.destroy?.();
       shaderMount.current = null;
     };
-  }, [isAgenda, styles.shaderSpeed]);
+  }, [isAgenda, inverted, styles.shaderSpeed]);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -280,7 +323,7 @@ export function LiquidMetalButton({
                 borderRadius: styles.borderRadius,
                 background: styles.innerBg,
                 boxShadow: isPressed ? "inset 0 1px 3px rgba(0,0,0,0.25)" : "none",
-                transition: "box-shadow 0.15s ease",
+                transition: "background 0.35s ease, box-shadow 0.15s ease",
               }}
             />
           </div>
@@ -302,7 +345,7 @@ export function LiquidMetalButton({
                 boxShadow: isHovered ? styles.hoverShadow : styles.outerShadow,
                 transition: "box-shadow 0.2s ease",
                 background: "transparent",
-                opacity: isAgenda ? 0.9 : 0.55,
+                opacity: styles.shaderOpacity,
               }}
             >
               <div
@@ -350,8 +393,7 @@ export function LiquidMetalButton({
                   width: "20px",
                   height: "20px",
                   borderRadius: "50%",
-                  background:
-                    "radial-gradient(circle, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 70%)",
+                  background: styles.rippleBg,
                   pointerEvents: "none",
                   animation: "ripple-animation 0.6s ease-out",
                 }}

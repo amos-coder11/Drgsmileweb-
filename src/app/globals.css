@@ -1,11 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  --color-noel-green: #1B3022;
-  --color-noel-lime: #DFFF00;
-  --color-noel-bg: #ffffff;
+  --color-drgsmile-green: #1B3022;
+  --color-drgsmile-lime: #DFFF00;
+  --color-drgsmile-bg: #ffffff;
   --font-display: "Cormorant Garamond", Georgia, serif;
   --font-body: "DM Sans", system-ui, sans-serif;
+
+  --color-background: #ffffff;
+  --color-foreground: #1B3022;
+  --color-primary: #1B3022;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f2f2ea;
+  --color-secondary-foreground: #1B3022;
+  --color-muted-foreground: #737373;
+  --color-accent: #f2f2ea;
+  --color-accent-foreground: #1B3022;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  --color-input: #e5e5e5;
+  --color-ring: #1B3022;
 }
 
 @layer base {
@@ -15,12 +29,333 @@
 
   body {
     font-family: var(--font-body);
-    background-color: var(--color-noel-bg);
+    background-color: var(--color-drgsmile-bg);
     color: #1B3022;
     overflow-x: hidden;
   }
 
   ::selection {
-    background-color: color-mix(in srgb, var(--color-noel-lime) 60%, transparent);
+    background-color: color-mix(in srgb, var(--color-drgsmile-lime) 60%, transparent);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}
+
+/* ── You Can Scroll bridge section (entre morph y galería) ── */
+@property --hue {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: false;
+}
+
+@property --chroma {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+
+.you-can-scroll {
+  --start: 130;
+  --end: 430;
+  --lightness: 75%;
+  --base-chroma: 0.3;
+  --font-size-min: 14;
+  --font-size-max: 20;
+  --font-ratio-min: 1.1;
+  --font-ratio-max: 1.33;
+  --font-width-min: 375;
+  --font-width-max: 1500;
+}
+
+.you-can-scroll__fluid {
+  --fluid-min: calc(
+    var(--font-size-min) * pow(var(--font-ratio-min), var(--font-level, 0))
+  );
+  --fluid-max: calc(
+    var(--font-size-max) * pow(var(--font-ratio-max), var(--font-level, 0))
+  );
+  --fluid-preferred: calc(
+    (var(--fluid-max) - var(--fluid-min)) /
+      (var(--font-width-max) - var(--font-width-min))
+  );
+  --fluid-type: clamp(
+    (var(--fluid-min) / 16) * 1rem,
+    ((var(--fluid-min) / 16) * 1rem) -
+      (((var(--fluid-preferred) * var(--font-width-min)) / 16) * 1rem) +
+      (var(--fluid-preferred) * var(--variable-unit, 100vi)),
+    (var(--fluid-max) / 16) * 1rem
+  );
+  font-size: var(--fluid-type);
+}
+
+.you-can-scroll__intro {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-inline: 0;
+  text-align: center;
+}
+
+.you-can-scroll__intro--raul,
+.you-can-scroll__intro--compact {
+  min-height: auto;
+  padding: clamp(1.5rem, 4vh, 2.5rem) clamp(1rem, 4vw, 2rem);
+}
+
+.you-can-scroll--compact .you-can-scroll__list li {
+  min-height: clamp(10rem, 28svh, 16rem);
+}
+
+.you-can-scroll--compact .you-can-scroll__outro {
+  min-height: 60svh;
+}
+
+/* ── Raul signature hero (referencia editorial) ── */
+.raul-signature-hero__bg-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(0.25rem, 2vh, 1rem);
+  padding: clamp(1rem, 4vw, 3rem);
+}
+
+.raul-signature-hero__bg-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.08em;
+  font-size: clamp(2.5rem, 11vw, 7.5rem);
+  font-weight: 700;
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  opacity: 0.92;
+}
+
+.raul-signature-hero__bg-row--lower {
+  margin-top: -0.12em;
+}
+
+/* Firma Raúl — PNG teñido rojo (encima de la imagen) */
+.raul-signature-png-red {
+  filter: brightness(0) saturate(100%) invert(15%) sepia(98%) saturate(7452%)
+    hue-rotate(358deg) brightness(103%) contrast(118%);
+}
+
+.raul-signature--red {
+  filter: drop-shadow(0 0 12px rgba(255, 0, 0, 0.35));
+}
+
+.raul-signature--white {
+  filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.55));
+}
+
+.raul-signature--lime {
+  filter: drop-shadow(0 0 22px rgba(223, 255, 0, 0.45));
+}
+
+.you-can-scroll__intro h1 {
+  --font-size-min: 24;
+  --font-level: 8;
+  text-wrap: pretty;
+  line-height: 0.82;
+  margin: 0 auto;
+  max-width: 12ch;
+  background: linear-gradient(#f2f2ea 55%, color-mix(in oklch, #000, #f2f2ea 35%));
+  background-clip: text;
+  color: transparent;
+}
+
+.you-can-scroll__main {
+  width: 100%;
+  max-width: 1100px;
+  margin-inline: auto;
+}
+
+.you-can-scroll__content {
+  --font-level: 6;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(0.75rem, 3vw, 2rem);
+  line-height: 1.2;
+  width: 100%;
+  padding-inline: clamp(1.25rem, 5vw, 3rem);
+}
+
+.you-can-scroll__sticky-line {
+  position: sticky;
+  top: calc(50% - 0.5lh);
+  font-size: inherit;
+  margin: 0;
+  display: inline-block;
+  height: fit-content;
+  font-weight: 600;
+  flex-shrink: 0;
+  text-align: right;
+  background: linear-gradient(
+    #f2f2ea 50%,
+    color-mix(in oklch, #0a0a0a, #f2f2ea 28%)
+  );
+  background-clip: text;
+  color: transparent;
+}
+
+.you-can-scroll__list {
+  font-weight: 600;
+  padding-inline: 0;
+  margin: 0;
+  list-style-type: none;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.you-can-scroll__list {
+  --step: calc((var(--end) - var(--start)) / (var(--count) - 1));
+}
+
+.you-can-scroll__list li:not(:last-of-type) {
+  color: oklch(
+    var(--lightness) var(--base-chroma)
+      calc(var(--start) + (var(--step) * var(--i)))
+  );
+}
+
+.you-can-scroll__list li {
+  min-height: clamp(14rem, 42svh, 22rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.you-can-scroll[data-snap="true"] .you-can-scroll__list li {
+  scroll-snap-align: center;
+}
+
+.you-can-scroll[data-snap="true"] {
+  scroll-snap-type: y proximity;
+}
+
+.you-can-scroll__list li:last-of-type {
+  background: linear-gradient(
+    #f2f2ea 50%,
+    color-mix(in oklch, #0a0a0a, #f2f2ea 28%)
+  );
+  background-clip: text;
+  color: transparent;
+}
+
+.you-can-scroll__outro {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-inline: clamp(1.25rem, 5vw, 3rem);
+  text-align: center;
+}
+
+.you-can-scroll__outro h2 {
+  --font-level: 6;
+  margin: 0;
+  background: linear-gradient(#f2f2ea 55%, color-mix(in oklch, #000, #f2f2ea 35%));
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes you-can-scroll-brighten {
+  0% {
+    opacity: var(--start-opacity, 0.2);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(var(--brightness, 1.2));
+  }
+  100% {
+    opacity: var(--end-opacity, 0.2);
+  }
+}
+
+@keyframes you-can-scroll-change {
+  to {
+    --hue: var(--end);
+  }
+}
+
+@keyframes you-can-scroll-chroma-on {
+  to {
+    --chroma: 0.3;
+  }
+}
+
+@keyframes you-can-scroll-chroma-off {
+  to {
+    --chroma: 0;
+  }
+}
+
+@supports (animation-timeline: scroll()) and (animation-range: 0% 100%) {
+  .you-can-scroll[data-animate="true"] .you-can-scroll__list li {
+    opacity: 0.2;
+    animation-name: you-can-scroll-brighten;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-range: cover calc(50% - 1lh) calc(50% + 1lh);
+    animation-timeline: view();
+  }
+
+  .you-can-scroll[data-animate="true"] .you-can-scroll__list li:first-of-type {
+    --start-opacity: 1;
+  }
+
+  .you-can-scroll[data-animate="true"] .you-can-scroll__list li:last-of-type {
+    --brightness: 1;
+    --end-opacity: 1;
+  }
+
+  .you-can-scroll[data-sync-scrollbar="true"][data-animate="true"] {
+    timeline-scope: --you-can-scroll-list;
+    animation-name: you-can-scroll-change, you-can-scroll-chroma-on,
+      you-can-scroll-chroma-off;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-range: entry 50% exit 50%, entry 40% entry 50%, exit 30% exit 40%;
+    animation-timeline: --you-can-scroll-list;
+  }
+
+  .you-can-scroll[data-sync-scrollbar="true"][data-animate="true"]
+    .you-can-scroll__list {
+    view-timeline: --you-can-scroll-list;
+  }
+}
+
+@media (max-width: 768px) {
+  .you-can-scroll__content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .you-can-scroll__sticky-line {
+    position: relative;
+    top: auto;
+    text-align: center;
+  }
+
+  .you-can-scroll__list {
+    width: 100%;
   }
 }
