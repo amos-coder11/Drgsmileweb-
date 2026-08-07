@@ -111,7 +111,7 @@ export function LiquidGlassDivider({
       style={{
         width: isVertical ? thickness : "100%",
         height: isVertical ? "auto" : thickness,
-        background: "linear-gradient(135deg, #2a2a2a 0%, #0a0a0a 50%, #1f1f1f 100%)",
+        background: "linear-gradient(135deg, #252720 0%, #11120f 50%, #1b1d18 100%)",
       }}
     >
       <div ref={shaderRef} className="shader-container-exploded pointer-events-none absolute inset-0" />

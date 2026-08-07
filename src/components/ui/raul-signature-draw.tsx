@@ -44,7 +44,7 @@ export function RaulSignatureDraw({
   scrollProgress,
   className,
   stroke = "#ffffff",
-  strokeBorder = "#1a56db",
+  strokeBorder = "#609edb",
   strokeWidth = 9,
   borderWidth = 2,
 }: RaulSignatureDrawProps) {

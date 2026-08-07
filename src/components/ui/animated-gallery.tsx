@@ -18,7 +18,7 @@ interface ContainerScrollContextValue {
 }
 
 const SPRING_CONFIG = {
-  type: "spring",
+  type: "spring" as const,
   stiffness: 100,
   damping: 16,
   mass: 0.75,
@@ -113,8 +113,26 @@ export const GalleryContainer = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & HTMLMotionProps<"div">) => {
   const { scrollYProgress } = useContainerScrollContext();
-  const rotateX = useTransform(scrollYProgress, [0, 0.38], [52, 0]);
-  const scale = useTransform(scrollYProgress, [0.28, 0.72], [1.12, 1]);
+  const [compact, setCompact] = React.useState(false);
+
+  React.useEffect(() => {
+    const media = window.matchMedia("(max-width: 1023px)");
+    const update = () => setCompact(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  const rotateX = useTransform(
+    scrollYProgress,
+    [0, compact ? 0.34 : 0.5],
+    [compact ? 0 : 75, 0],
+  );
+  const scale = useTransform(
+    scrollYProgress,
+    compact ? [0, 0.7] : [0.5, 0.9],
+    compact ? [1, 1] : [1.2, 1],
+  );
 
   return (
     <motion.div
@@ -192,7 +210,7 @@ export const ContainerAnimated = React.forwardRef<
       ref={ref}
       className={cn(className)}
       variants={blurVariants}
-      transition={SPRING_CONFIG || transition}
+      transition={transition ?? SPRING_CONFIG}
       {...props}
     />
   );

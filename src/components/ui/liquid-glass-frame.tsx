@@ -54,13 +54,13 @@ export function LiquidGlassFrame({
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   const isLight = variant === "light";
-  const innerBg = isLight ? "#ffffff" : "#0a0a0a";
+  const innerBg = isLight ? "#ffffff" : "#11120f";
   const innerRadius = Math.max(borderRadius - borderWidth, 4);
   const shaderSpeed = isLight ? 0.6 : 0.5;
   const hoverSpeed = isLight ? 1.1 : 0.9;
 
   const frameGradient = isLight
-    ? "linear-gradient(135deg, #2a2a2a 0%, #0a0a0a 50%, #1f1f1f 100%)"
+    ? "linear-gradient(135deg, #252720 0%, #11120f 50%, #1b1d18 100%)"
     : "linear-gradient(135deg, #e8e8e8 0%, #ffffff 35%, #bdbdbd 100%)";
 
   const outerShadow = isHovered

@@ -28,10 +28,10 @@ function useLogoAlignedHeight(enabled: boolean) {
 
     const update = () => {
       const w = window.innerWidth;
-      if (w >= 768) {
+      if (w >= 1024) {
         setSizes({ height: 72, compact: false });
       } else if (w >= 480) {
-        setSizes({ height: 44, compact: true });
+        setSizes({ height: 50, compact: true });
       } else {
         setSizes({ height: 40, compact: true });
       }
@@ -95,7 +95,7 @@ export function LiquidMetalButton({
       if (inverted) {
         return {
           innerBg: "linear-gradient(180deg, #ffffff 0%, #f3f3f3 100%)",
-          textColor: "#000000",
+          textColor: "#11120f",
           borderRadius: "8px",
           shaderRadius: "8px",
           shaderSpeed: 0.5,
@@ -111,7 +111,7 @@ export function LiquidMetalButton({
         };
       }
       return {
-        innerBg: "linear-gradient(180deg, #202020 0%, #000000 100%)",
+        innerBg: "linear-gradient(180deg, #1b1d18 0%, #11120f 100%)",
         textColor: "#ffffff",
         borderRadius: "8px",
         shaderRadius: "8px",
@@ -119,9 +119,9 @@ export function LiquidMetalButton({
         hoverSpeed: 0.9,
         clickSpeed: 2,
         outerShadow:
-          "0px 0px 0px 1px rgba(0, 0, 0, 0.3), 0px 4px 8px rgba(0, 0, 0, 0.12)",
+          "0px 0px 0px 1px rgba(17, 18, 15, 0.3), 0px 4px 8px rgba(17, 18, 15, 0.14)",
         hoverShadow:
-          "0px 0px 0px 1px rgba(0, 0, 0, 0.4), 0px 8px 14px rgba(0, 0, 0, 0.18)",
+          "0px 0px 0px 1px rgba(17, 18, 15, 0.42), 0px 8px 14px rgba(17, 18, 15, 0.2)",
         shaderOpacity: 0.9,
         rippleBg:
           "radial-gradient(circle, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 70%)",

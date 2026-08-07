@@ -5,6 +5,7 @@ import {
   motion,
   useAnimationFrame,
   useMotionValue,
+  useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
@@ -48,15 +49,18 @@ function ParallaxText({
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
   const smoothVelocity = useSpring(scrollVelocity, {
-    damping: 50,
-    stiffness: 400,
+    damping: 34,
+    stiffness: 180,
+    mass: 0.55,
   });
 
-  const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 5], {
-    clamp: false,
+  const velocityFactor = useTransform(smoothVelocity, [-1200, 0, 1200], [-2.25, 0, 2.25], {
+    clamp: true,
   });
+  const shouldReduceMotion = useReducedMotion();
 
   const [repetitions, setRepetitions] = useState(1);
+  const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
 
@@ -76,20 +80,34 @@ function ParallaxText({
     return () => window.removeEventListener("resize", calculateRepetitions);
   }, [children]);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0, rootMargin: "100px 0px" },
+    );
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
   const x = useTransform(baseX, (v) => `${wrap(-100 / repetitions, 0, v)}%`);
 
   const directionFactor = React.useRef<number>(1);
-  useAnimationFrame((t, delta) => {
-    let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
+  useAnimationFrame((_, delta) => {
+    if (shouldReduceMotion || !isVisible) return;
 
-    if (velocityFactor.get() < 0) {
+    const velocity = velocityFactor.get();
+    if (velocity < -0.01) {
       directionFactor.current = -1;
-    } else if (velocityFactor.get() > 0) {
+    } else if (velocity > 0.01) {
       directionFactor.current = 1;
     }
 
-    moveBy += directionFactor.current * moveBy * velocityFactor.get();
-
+    const speedBoost = 1 + Math.abs(velocity);
+    const moveBy =
+      directionFactor.current * baseVelocity * speedBoost * (delta / 1000);
     baseX.set(baseX.get() + moveBy);
   });
 
