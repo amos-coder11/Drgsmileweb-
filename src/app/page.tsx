@@ -1,5 +1,10 @@
 import { HeroToGalleryMorph } from "@/components/HeroToGalleryMorph";
+import { MotionOrchestrator } from "@/components/MotionOrchestrator";
 
 export default function Home() {
-  return <HeroToGalleryMorph />;
+  return (
+    <MotionOrchestrator>
+      <HeroToGalleryMorph />
+    </MotionOrchestrator>
+  );
 }

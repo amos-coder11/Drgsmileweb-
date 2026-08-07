@@ -1,8 +1,19 @@
 @import "tailwindcss";
+@source "../components/DrGsmileScrollExperience.tsx";
+@source "../components/SmileBookSection.tsx";
+@source "../components/ui/card-fan-carousel.tsx";
+@source "../components/ui/book.tsx";
+@source "../components/ui/cinematic-product-scroll-section.tsx";
+@source "../components/ui/flip-links.tsx";
+@source "../components/MotionOrchestrator.tsx";
+@source "../components/SmilePassSection.tsx";
+@source "../components/ui/admit-one-ticket.tsx";
 
 @theme {
   --color-drgsmile-green: #1B3022;
-  --color-drgsmile-lime: #DFFF00;
+  --color-drgsmile-blue: #609edb;
+  --color-drgsmile-dark: #11120f;
+  --color-drgsmile-lime: #609edb;
   --color-drgsmile-bg: #ffffff;
   --font-display: "Cormorant Garamond", Georgia, serif;
   --font-body: "DM Sans", system-ui, sans-serif;
@@ -20,11 +31,52 @@
   --color-destructive-foreground: #ffffff;
   --color-input: #e5e5e5;
   --color-ring: #1B3022;
+  --color-gray-200: var(--ds-gray-200);
+  --color-gray-1000: var(--ds-gray-1000);
+  --color-gray-alpha-400: var(--ds-gray-alpha-400);
+  --color-background-200: var(--ds-background-200);
+  --shadow-book: var(--ds-shadow-book);
+  --shadow-book-border: var(--ds-shadow-book-border);
+}
+
+:root {
+  --ds-gray-200: hsl(60 8% 91%);
+  --ds-gray-1000: #11120f;
+  --ds-gray-alpha-400: rgba(17, 18, 15, 0.1);
+  --ds-background-200: #f8f8f3;
+  --ds-book-bind:
+    linear-gradient(
+      90deg,
+      transparent,
+      transparent 12%,
+      rgba(255, 255, 255, 0.28) 29.25%,
+      transparent 50.5%,
+      transparent 75.25%,
+      rgba(255, 255, 255, 0.25) 91%,
+      transparent
+    ),
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.03),
+      rgba(0, 0, 0, 0.1) 12%,
+      transparent 30%,
+      rgba(0, 0, 0, 0.02) 50%,
+      rgba(0, 0, 0, 0.2) 73.5%,
+      rgba(0, 0, 0, 0.5) 75.25%,
+      rgba(0, 0, 0, 0.15) 85.25%,
+      transparent
+    );
+  --ds-shadow-book:
+    0 1px 1px rgba(17, 18, 15, 0.04),
+    0 8px 18px -8px rgba(17, 18, 15, 0.18),
+    0 28px 48px -18px rgba(17, 18, 15, 0.22);
+  --ds-shadow-book-border: inset 0 1px 2px rgba(255, 255, 255, 0.36);
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
   }
 
   body {
@@ -32,10 +84,19 @@
     background-color: var(--color-drgsmile-bg);
     color: #1B3022;
     overflow-x: hidden;
+    overscroll-behavior-y: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  a:active,
+  button:active {
+    filter: brightness(0.92);
   }
 
   ::selection {
-    background-color: color-mix(in srgb, var(--color-drgsmile-lime) 60%, transparent);
+    background-color: color-mix(in srgb, var(--color-drgsmile-blue) 55%, transparent);
   }
 
   .sr-only {
@@ -48,6 +109,143 @@
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border-width: 0;
+  }
+}
+
+.fan-layout {
+  height: 33rem;
+  contain: layout paint;
+  touch-action: pan-y;
+}
+
+.fan-card {
+  appearance: none;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(18rem, 25vw);
+  height: 30rem;
+  margin-left: calc(min(18rem, 25vw) / -2);
+  overflow: hidden;
+  border: 0.4rem solid #f2f2ea;
+  border-radius: 3.2rem;
+  padding: 0;
+  cursor: pointer;
+  background: #11120f;
+  box-shadow: none;
+  opacity: 0;
+  transform-origin: 50% 100%;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.fan-card:focus-visible {
+  outline: 3px solid #609edb;
+  outline-offset: 4px;
+}
+
+.bg-book-gradient {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(232, 232, 225, 0.95)),
+    #f2f2ea;
+}
+
+.book-rotate {
+  transform: rotateY(0deg) rotateX(0deg) translateY(0);
+  transform-origin: 18% 58%;
+  will-change: transform, filter;
+}
+
+.book-rotate:hover,
+.book-rotate:focus-within {
+  transform: rotateY(-16deg) rotateX(2deg) translateY(-0.65rem);
+  filter: drop-shadow(1.1rem 1.5rem 1.35rem rgba(17, 18, 15, 0.18));
+}
+
+.book-shelf {
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  touch-action: pan-x pan-y;
+}
+
+.book-shelf::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .book-shelf {
+    position: relative;
+    height: 21rem;
+    margin-inline: 0;
+  }
+
+  .book-shelf > * {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    margin-left: -5.2rem;
+    transform-origin: 50% 100%;
+  }
+
+  .book-shelf > :nth-child(1) {
+    left: 22%;
+    z-index: 1;
+    scale: 0.88;
+    rotate: -7deg;
+  }
+
+  .book-shelf > :nth-child(2) {
+    left: 50%;
+    z-index: 3;
+    scale: 1.04;
+  }
+
+  .book-shelf > :nth-child(3) {
+    left: 78%;
+    z-index: 2;
+    scale: 0.88;
+    rotate: 7deg;
+  }
+}
+
+@media (max-width: 1023px) {
+  .fan-layout { height: 31rem; }
+  .fan-card {
+    width: 16.5rem;
+    height: 28.5rem;
+    margin-left: -8.25rem;
+    border-radius: 2.6rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .fan-layout { height: 26rem; }
+  .fan-card {
+    width: 13.5rem;
+    height: 24rem;
+    margin-left: -6.75rem;
+    border-width: 0.3rem;
+    border-radius: 2rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .fan-layout { height: 25rem; }
+  .fan-card {
+    width: 13rem;
+    height: 23.5rem;
+    margin-left: -6.5rem;
+    border-radius: 1.8rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .fan-layout { height: 24rem; }
+  .fan-card {
+    width: 12.25rem;
+    height: 22.5rem;
+    margin-left: -6.125rem;
+    border-radius: 1.65rem;
   }
 }
 
@@ -163,7 +361,22 @@
 }
 
 .raul-signature--lime {
-  filter: drop-shadow(0 0 22px rgba(223, 255, 0, 0.45));
+  filter: drop-shadow(0 0 22px rgba(96, 158, 219, 0.45));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 .you-can-scroll__intro h1 {
@@ -274,6 +487,40 @@
   background: linear-gradient(#f2f2ea 55%, color-mix(in oklch, #000, #f2f2ea 35%));
   background-clip: text;
   color: transparent;
+}
+
+@keyframes drg-scroll-cue {
+  0%,
+  100% {
+    transform: translate3d(0, -2px, 0);
+    opacity: 0.55;
+  }
+
+  50% {
+    transform: translate3d(0, 7px, 0);
+    opacity: 1;
+  }
+}
+
+.drg-journey-line {
+  filter: drop-shadow(0 0 5px rgba(96, 158, 219, 0.24));
+  animation: drg-line-breathe 3.2s ease-in-out infinite;
+}
+
+@keyframes drg-line-breathe {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 4px rgba(96, 158, 219, 0.2));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 12px rgba(96, 158, 219, 0.44));
+  }
+}
+
+.drg-scroll-cue {
+  animation: drg-scroll-cue 1.8s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+  will-change: transform, opacity;
 }
 
 @keyframes you-can-scroll-brighten {
