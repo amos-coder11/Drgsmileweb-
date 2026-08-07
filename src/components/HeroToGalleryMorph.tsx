@@ -16,7 +16,7 @@ import { GalleryToDualTransition } from "./GalleryToDualTransition";
 function BlackLinesBackground({ className = "" }: { className?: string }) {
   return (
     <div
-      className={`pointer-events-none fixed inset-0 z-[1] bg-black ${className}`}
+      className={`pointer-events-none fixed inset-0 z-[1] bg-[#11120f] ${className}`}
       aria-hidden
     >
       <TopographicBackground lineColor="#cfcfc3" pauseOnLightSurface />
@@ -30,8 +30,6 @@ if (typeof window !== "undefined") {
 
 const ASPECT = 16 / 9;
 
-/** Scroll del pin (0→1) */
-const PIN_HEIGHT = "200vh";
 const MORPH_PHASE2_START = SIGNATURE_DRAW_END + 0.06;
 
 const photoBottom = (top: number, height: number, gap = 12) => top + height + gap;
@@ -44,7 +42,7 @@ const photoBottom = (top: number, height: number, gap = 12) => top + height + ga
 export function HeroToGalleryMorph() {
   const pinRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
-  const galleryRef = useRef<HTMLElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
   const bridgeRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const heroLayerRef = useRef<HTMLDivElement>(null);
@@ -52,6 +50,31 @@ export function HeroToGalleryMorph() {
   const signatureLayerRef = useRef<HTMLDivElement>(null);
   const velocityBgRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<GallerySectionHandle>(null);
+
+  useEffect(() => {
+    let timer = 0;
+
+    const alignHashTarget = () => {
+      const id = decodeURIComponent(window.location.hash.slice(1));
+      if (!id) return;
+
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        ScrollTrigger.refresh();
+        requestAnimationFrame(() => {
+          document.getElementById(id)?.scrollIntoView({ block: "start" });
+        });
+      }, 280);
+    };
+
+    alignHashTarget();
+    window.addEventListener("hashchange", alignHashTarget);
+
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("hashchange", alignHashTarget);
+    };
+  }, []);
 
   useEffect(() => {
     const pin = pinRef.current;
@@ -97,7 +120,7 @@ export function HeroToGalleryMorph() {
       }
 
       // Fallback: center column ≈ 1/3 of content width
-      const pad = window.innerWidth >= 768 ? 32 : 16;
+      const pad = window.innerWidth >= 1024 ? 32 : 16;
       const contentW = Math.min(1600, sticky.clientWidth - pad * 2);
       const gap = 8;
       const colW = (contentW - gap * 2) / 3;
@@ -110,7 +133,11 @@ export function HeroToGalleryMorph() {
 
     const midPhoto = () => {
       const t = getTarget16x9();
-      const width = Math.min(t.width * 1.75, window.innerWidth * 0.72);
+      const compact = window.innerWidth < 1024;
+      const width = Math.min(
+        t.width * (compact ? 2.65 : 1.75),
+        window.innerWidth * (compact ? 0.86 : 0.72)
+      );
       const height = width / ASPECT;
       return {
         width,
@@ -176,7 +203,7 @@ export function HeroToGalleryMorph() {
           trigger: pin,
           start: "top top",
           end: "bottom bottom",
-          scrub: 1,
+          scrub: window.innerWidth < 1024 ? 0.58 : 0.82,
           invalidateOnRefresh: true,
         },
       });
@@ -210,7 +237,15 @@ export function HeroToGalleryMorph() {
       );
       tl.to(frame, { borderRadius: 10, duration: 0.5 }, 0);
       // Ocultar features/badge/slogan solo cuando ya empezó a encoger (no al cargar)
-      tl.to(fadeEls, { autoAlpha: 0, duration: 0.18 }, 0.12);
+      tl.to(
+        fadeEls,
+        {
+          autoAlpha: 0,
+          y: -22,
+          duration: 0.2,
+        },
+        0.1
+      );
       // Hero fuera primero; luego aparece solo banner-eleven-1 (sin crossfade con el equipo)
       tl.to(
         heroLayer,
@@ -218,7 +253,18 @@ export function HeroToGalleryMorph() {
         0.2
       );
       tl.set(fotoLayer, { opacity: 1 }, 0.2);
-      tl.to(signatureLayer, { opacity: 1, duration: 0.15 }, 0.22);
+      tl.fromTo(
+        fotoLayer,
+        { scale: 1.045 },
+        { scale: 1, duration: 0.42 },
+        0.2
+      );
+      tl.fromTo(
+        signatureLayer,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.2 },
+        0.21
+      );
       tl.to(velocityBg, { opacity: 1, duration: 0.15 }, 0.22);
 
       // B/N progresivo mientras se dibuja la firma — completo al terminar el trazo
@@ -233,7 +279,17 @@ export function HeroToGalleryMorph() {
       );
 
       // Puente pegado bajo la foto — aparece cuando la foto ya está centrada
-      tl.to(bridge, { opacity: 1, pointerEvents: "auto", duration: 0.2 }, 0.48);
+      tl.fromTo(
+        bridge,
+        { opacity: 0, clipPath: "inset(0 0 100% 0)" },
+        {
+          opacity: 1,
+          clipPath: "inset(0 0 0% 0)",
+          pointerEvents: "auto",
+          duration: 0.2,
+        },
+        0.46
+      );
       tl.to(
         bridge,
         {
@@ -298,7 +354,7 @@ export function HeroToGalleryMorph() {
   }, []);
 
   return (
-    <div className="relative w-full bg-black">
+    <div className="relative w-full bg-[#11120f]">
       <BlackLinesBackground />
       <SiteHeader
         morphPinRef={pinRef}
@@ -307,7 +363,11 @@ export function HeroToGalleryMorph() {
       />
 
       {/* Morph: hero → 16:9 → fondo1 slot */}
-      <div ref={pinRef} data-morph-pin className="relative z-20 w-full" style={{ height: PIN_HEIGHT }}>
+      <div
+        ref={pinRef}
+        data-morph-pin
+        className="relative z-20 h-[125svh] w-full lg:h-[200vh]"
+      >
         <div
           ref={stickyRef}
           data-black-surface

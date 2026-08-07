@@ -75,10 +75,13 @@ export function TopographicBackground({
 
     const noise = makeNoise(12345);
     const isCoarse = window.matchMedia("(max-width: 768px)").matches;
-    const cell = isCoarse ? 8 : 7;
+    // Las líneas cambian lentamente; una malla más ligera mantiene el mismo
+    // aspecto sin recalcular cientos de miles de segmentos por fotograma.
+    const cell = isCoarse ? 14 : 10;
     const nScale = 0.007;
-    const levels = isCoarse ? 9 : 10;
+    const levels = isCoarse ? 5 : 7;
     const speed = 0.06;
+    const frameInterval = 1000 / (isCoarse ? 18 : 30);
 
     let cols = 0;
     let rows = 0;
@@ -90,13 +93,14 @@ export function TopographicBackground({
     let visible = true;
     let tabVisible = !document.hidden;
     let coveredByLight = false;
+    let lastRenderTime = 0;
 
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
     const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, isCoarse ? 1.25 : 1.5);
+      dpr = Math.min(window.devicePixelRatio || 1, isCoarse ? 1 : 1.35);
       w = canvas.clientWidth;
       h = canvas.clientHeight;
       canvas.width = Math.floor(w * dpr);
@@ -127,9 +131,13 @@ export function TopographicBackground({
 
     const render = (t: number) => {
       raf = 0;
-      checkLightCover();
-
       if (!shouldAnimate()) return;
+
+      if (t - lastRenderTime < frameInterval) {
+        raf = requestAnimationFrame(render);
+        return;
+      }
+      lastRenderTime = t;
 
       const z = t * 0.001 * speed;
 
@@ -232,8 +240,23 @@ export function TopographicBackground({
       if (shouldAnimate()) raf = requestAnimationFrame(render);
     };
 
+    let coverRaf = 0;
+
+    const updateLightCover = () => {
+      coverRaf = 0;
+      if (!pauseOnLightSurface) return;
+      checkLightCover();
+      if (coveredByLight) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      } else {
+        startLoop();
+      }
+    };
+
     const onScroll = () => {
-      if (pauseOnLightSurface) startLoop();
+      if (!pauseOnLightSurface || coverRaf !== 0) return;
+      coverRaf = requestAnimationFrame(updateLightCover);
     };
 
     const io = new IntersectionObserver(
@@ -266,6 +289,7 @@ export function TopographicBackground({
     return () => {
       cancelAnimationFrame(raf);
       cancelAnimationFrame(resizeRaf);
+      cancelAnimationFrame(coverRaf);
       io.disconnect();
       ro.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);

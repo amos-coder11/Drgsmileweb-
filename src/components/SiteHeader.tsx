@@ -37,33 +37,16 @@ export function SiteHeader({
   /** Solo true cuando el fondo negro cubre el header — en blanco = look de la 1ª sección */
   const [onBlack, setOnBlack] = useState(false);
 
-  const isVisibleSurface = (el: Element | null) => {
-    let node: Element | null = el;
-    while (node && node !== document.documentElement) {
-      const style = window.getComputedStyle(node);
-      if (
-        style.display === "none" ||
-        style.visibility === "hidden" ||
-        Number(style.opacity) === 0
-      ) {
-        return false;
-      }
-      node = node.parentElement;
-    }
-    return true;
-  };
-
   const isBlackBehind = useCallback((headerEl: HTMLElement, x: number, y: number) => {
     headerEl.style.pointerEvents = "none";
     const hit = document.elementFromPoint(x, y);
     headerEl.style.pointerEvents = "";
     if (!hit) return false;
 
-    const light = hit.closest("[data-light-surface]");
-    if (light && isVisibleSurface(light)) return false;
-
-    const black = hit.closest("[data-black-surface]");
-    return Boolean(black && isVisibleSurface(black));
+    const surface = hit.closest(
+      "[data-light-surface], [data-black-surface]"
+    );
+    return Boolean(surface?.hasAttribute("data-black-surface"));
   }, []);
 
   useEffect(() => {
@@ -75,6 +58,50 @@ export function SiteHeader({
       );
     }
   }, []);
+
+  useEffect(() => {
+    const headerEl = headerRef.current;
+    if (!headerEl) return;
+
+    let lastY = window.scrollY;
+    let frame = 0;
+
+    const updateVisibility = () => {
+      frame = 0;
+      const nextY = window.scrollY;
+      const delta = nextY - lastY;
+
+      if (menuOpen || nextY < 96 || delta < -7) {
+        gsap.to(headerEl, {
+          yPercent: 0,
+          duration: 0.58,
+          ease: "power4.out",
+          overwrite: "auto",
+        });
+      } else if (delta > 7) {
+        gsap.to(headerEl, {
+          yPercent: -118,
+          duration: 0.46,
+          ease: "power3.inOut",
+          overwrite: "auto",
+        });
+      }
+
+      lastY = nextY;
+    };
+
+    const scheduleVisibility = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(updateVisibility);
+    };
+
+    window.addEventListener("scroll", scheduleVisibility, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", scheduleVisibility);
+      gsap.killTweensOf(headerEl);
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     const headerEl = headerRef.current;
@@ -164,11 +191,11 @@ export function SiteHeader({
       ref={headerRef}
       className={cn(
         "fixed top-0 right-0 left-0 z-[200] px-4 py-3",
-        "max-md:pt-[max(0.75rem,env(safe-area-inset-top))]",
-        "sm:px-6 sm:py-4 md:px-10 md:py-5 lg:px-14"
+        "max-lg:pt-[max(0.75rem,env(safe-area-inset-top))]",
+        "sm:px-6 sm:py-4 lg:px-14 lg:py-5"
       )}
     >
-      <div className="relative mx-auto flex max-w-[1600px] items-center justify-between gap-2 sm:gap-3 md:gap-4">
+      <div className="relative mx-auto flex max-w-[1600px] items-center justify-between gap-2 sm:gap-3 lg:gap-4">
         <Link
           href="/"
           className="z-10 min-w-0 flex-1 overflow-hidden pr-1 sm:flex-none sm:overflow-visible sm:pr-0"
@@ -176,7 +203,7 @@ export function SiteHeader({
           <DrGsmileLogoSvg inverted={onBlack} />
         </Link>
 
-        <div className="z-10 flex shrink-0 items-center gap-1.5 sm:gap-2 md:gap-3">
+        <div className="z-10 flex shrink-0 items-center gap-1.5 sm:gap-2 lg:gap-3">
           <LiquidMetalButton
             variant="agenda"
             label="AGENDA"
@@ -197,7 +224,7 @@ export function SiteHeader({
       </div>
 
       {menuOpen && (
-        <nav className="absolute top-full right-4 left-4 z-50 mt-2 rounded-lg border border-[#1B3022]/10 bg-white p-6 shadow-xl sm:right-6 sm:left-6 md:right-10 md:left-auto md:w-64">
+        <nav className="absolute top-full right-4 left-4 z-50 mt-2 rounded-lg border border-[#1B3022]/10 bg-white p-6 shadow-xl sm:right-6 sm:left-6 lg:right-14 lg:left-auto lg:w-64">
           {["Servicios", "Nosotros", "Testimonios", "Contacto"].map((item) => (
             <a
               key={item}

@@ -88,7 +88,7 @@ export function HeroFeatures() {
       {/* Móvil — dos columnas horizontales, centrado abajo */}
       <div
         ref={mobileRef}
-        className="absolute bottom-[clamp(8rem,calc(12vh+4.5rem),10.5rem)] left-[max(1rem,env(safe-area-inset-left))] right-[max(1rem,env(safe-area-inset-right))] z-[50] opacity-100 md:hidden"
+        className="absolute bottom-[clamp(8rem,calc(12vh+4.5rem),10.5rem)] left-[max(1rem,env(safe-area-inset-left))] right-[max(1rem,env(safe-area-inset-right))] z-[50] opacity-100 lg:hidden"
       >
         <LiquidGlassFrame variant="light" borderRadius={18} borderWidth={4} className="w-full">
           <div className="flex min-h-[7.5rem] items-stretch">
@@ -110,7 +110,7 @@ export function HeroFeatures() {
       {/* Desktop — panel vertical a la izquierda */}
       <div
         ref={desktopRef}
-        className="absolute bottom-8 left-6 z-[50] hidden opacity-100 md:block lg:bottom-12 lg:left-14"
+        className="absolute bottom-12 left-14 z-[50] hidden opacity-100 lg:block"
       >
         <LiquidGlassFrame
           variant="light"

@@ -9,7 +9,8 @@ import { TopographicBackground } from "./TopographicBackground";
 import { DrGsmileVerifiedBadge } from "./ui/drgsmile-verified-badge";
 
 /** DOF solo sobre retratos de fondo — la imagen principal queda fuera */
-const dofOverlay = "absolute inset-0 z-10 backdrop-blur-[2px]";
+const dofOverlay =
+  "absolute inset-0 z-10 backdrop-blur-[2px] max-lg:bg-white/10 max-lg:backdrop-blur-none";
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -17,27 +18,44 @@ export function HeroSection() {
   const imageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+    const media = gsap.matchMedia();
 
-    if (sloganRef.current) {
-      tl.fromTo(
-        sloganRef.current,
-        { x: -40, opacity: 0 },
-        { x: 0, opacity: 1, duration: 1 },
-        "-=0.4"
-      );
-    }
-    if (imageRef.current) {
-      tl.fromTo(
-        imageRef.current,
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1.2 },
-        "-=0.8"
-      );
-    }
+    media.add("(prefers-reduced-motion: no-preference)", () => {
+      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+
+      if (sloganRef.current) {
+        tl.fromTo(
+          sloganRef.current,
+          { x: -24, opacity: 0 },
+          {
+            x: 0,
+            opacity: 1,
+            duration: 0.82,
+            force3D: true,
+          },
+          0.15
+        );
+      }
+      if (imageRef.current) {
+        tl.fromTo(
+          imageRef.current,
+          { y: 38, scale: 0.985, opacity: 0 },
+          {
+            y: 0,
+            scale: 1,
+            opacity: 1,
+            duration: 1,
+            force3D: true,
+          },
+          0.05
+        );
+      }
+
+      return () => tl.kill();
+    });
 
     return () => {
-      tl.kill();
+      media.revert();
     };
   }, []);
 
@@ -45,7 +63,7 @@ export function HeroSection() {
     <section
       ref={sectionRef}
       data-light-surface
-      className="relative h-screen min-h-[700px] w-full overflow-hidden bg-[#f2f2ea] max-md:h-[100dvh] max-md:min-h-[100dvh]"
+      className="relative h-screen min-h-[700px] w-full overflow-hidden bg-[#f2f2ea] max-lg:h-[100dvh] max-lg:min-h-[100dvh]"
     >
       <div className="absolute inset-0 bg-white">
         <TopographicBackground lineColor="#cfcfc3" />
@@ -54,10 +72,10 @@ export function HeroSection() {
       {/* Imagen central — grande y anclada abajo */}
       <div
         ref={imageRef}
-        className="pointer-events-none absolute inset-x-0 bottom-0 top-[16%] z-[16] flex items-end justify-center md:top-[10%]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 top-[23%] z-[16] flex origin-bottom items-end justify-center will-change-transform lg:top-[10%]"
       >
         {/* Retratos de fondo — desktop */}
-        <div className="absolute inset-0 isolate z-[5] max-md:hidden">
+        <div className="absolute inset-0 isolate z-[5] max-lg:hidden">
           <Image
             src="/images/1-Photoroom.png"
             alt=""
@@ -124,10 +142,10 @@ export function HeroSection() {
         </div>
 
         {/* Primer plano — doctor nítido, sin DOF */}
-        <div className="relative z-10 flex h-full w-[min(1300px,98vw)] items-end justify-center max-md:items-start max-md:justify-center max-md:pb-[clamp(9rem,calc(13vh+5rem),11.5rem)] max-md:pt-[18%]">
-          <div className="relative h-full w-auto max-w-full max-md:flex max-md:h-[72%] max-md:max-h-[520px] max-md:w-full max-md:translate-y-[10%] max-md:justify-center md:pointer-events-auto">
+        <div className="relative z-10 flex h-full w-[min(1300px,98vw)] items-end justify-center max-lg:items-start max-lg:justify-center max-lg:pb-[clamp(9rem,calc(13vh+5rem),11.5rem)] max-lg:pt-[6%]">
+          <div className="relative h-full w-auto max-w-full max-lg:flex max-lg:h-[72%] max-lg:max-h-[620px] max-lg:w-full max-lg:translate-y-[10%] max-lg:justify-center lg:pointer-events-auto">
             {/* Retratos de fondo — móvil, alineados con imagen principal */}
-            <div className="absolute inset-0 z-[5] max-md:left-1/2 max-md:w-full max-md:max-w-none max-md:-translate-x-1/2 md:hidden">
+            <div className="absolute inset-0 z-[5] max-lg:left-1/2 max-lg:w-full max-lg:max-w-none max-lg:-translate-x-1/2 lg:hidden">
               <Image
                 src="/images/1-Photoroom.png"
                 alt=""
@@ -193,7 +211,7 @@ export function HeroSection() {
       {/* Capa blanca unificada — difuminado suave imagen → blanco sólido (móvil) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 left-0 right-0 z-[48] h-[clamp(320px,56dvh,450px)] w-full min-w-full translate-y-[2%] md:hidden"
+        className="pointer-events-none absolute inset-x-0 bottom-0 left-0 right-0 z-[48] h-[clamp(320px,56dvh,520px)] w-full min-w-full translate-y-[2%] lg:hidden"
         style={{
           background:
             "linear-gradient(to top, #ffffff 0%, #ffffff 52%, rgba(255,255,255,0.97) 62%, rgba(255,255,255,0.88) 72%, rgba(255,255,255,0.72) 80%, rgba(255,255,255,0.5) 87%, rgba(255,255,255,0.25) 93%, rgba(255,255,255,0.08) 97%, transparent 100%)",
@@ -202,14 +220,14 @@ export function HeroSection() {
 
       {/* Badge — siempre visible al inicio; se oculta con el morph */}
       <div data-hero-fade className="opacity-100">
-        <DrGsmileVerifiedBadge className="absolute bottom-[max(2.75rem,calc(env(safe-area-inset-bottom,0px)+2.75rem))] left-1/2 z-[50] -translate-x-1/2 md:bottom-8 md:left-auto md:right-10 md:translate-x-0 lg:bottom-12 lg:right-14" />
+        <DrGsmileVerifiedBadge className="absolute bottom-[max(2.75rem,calc(env(safe-area-inset-bottom,0px)+2.75rem))] left-1/2 z-[50] -translate-x-1/2 lg:bottom-12 lg:left-auto lg:right-14 lg:translate-x-0" />
       </div>
 
       {/* Slogan */}
       <div
         ref={sloganRef}
         data-hero-fade
-        className="absolute top-[16%] left-5 z-20 max-w-[280px] opacity-100 md:top-[20%] md:left-10 md:max-w-[320px] lg:left-14 lg:max-w-[360px]"
+        className="absolute left-5 right-5 top-[13%] z-[55] w-auto max-w-none bg-white/90 px-3 py-2 text-center opacity-100 will-change-[transform,opacity] lg:left-14 lg:right-auto lg:top-[20%] lg:max-w-[360px] lg:bg-transparent lg:px-0 lg:py-0 lg:text-left"
       >
         <div className="relative pl-1">
           <h1 className="font-[family-name:var(--font-serif)] text-[1.05rem] leading-[1.35] tracking-[0.02em] text-[#1B3022] md:text-[1.25rem] lg:text-[1.45rem]">

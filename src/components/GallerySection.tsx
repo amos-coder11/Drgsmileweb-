@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useImperativeHandle, useRef, type CSSProperties } from "react";
+import { forwardRef, useImperativeHandle, useRef } from "react";
 import {
   ContainerScroll,
   ContainerSticky,
@@ -41,41 +41,13 @@ type GallerySectionProps = {
   className?: string;
 };
 
-const GALLERY_FADE_HEIGHT = "min(50vh, 520px)";
-
-const galleryBottomFadeStyle: CSSProperties = {
-  background: [
-    "linear-gradient(to bottom,",
-    "transparent 0%,",
-    "rgba(242,242,234,0.04) 12%,",
-    "rgba(242,242,234,0.18) 28%,",
-    "rgba(242,242,234,0.42) 46%,",
-    "rgba(242,242,234,0.68) 62%,",
-    "rgba(242,242,234,0.88) 78%,",
-    "#f2f2ea 100%)",
-  ].join(" "),
-};
-
 /** Altura del tramo crema tras el carrusel — debe coincidir con el -mt de la 3ª sección */
-export const GALLERY_CREAM_TAIL = "min(28vh, 260px)";
-
-function GalleryBottomFade({ className }: { className?: string }) {
-  return (
-    <div
-      aria-hidden
-      className={cn("pointer-events-none absolute inset-x-0 bottom-0 z-30", className)}
-      style={{
-        height: GALLERY_FADE_HEIGHT,
-        ...galleryBottomFadeStyle,
-      }}
-    />
-  );
-}
+export const GALLERY_CREAM_TAIL = "0px";
 
 function MeasureSlot() {
   return (
     <div
-      className="aspect-video block h-auto w-full rounded-md"
+      className="block aspect-[3/4] h-auto w-full rounded-md lg:aspect-video"
       aria-hidden
     />
   );
@@ -83,15 +55,13 @@ function MeasureSlot() {
 
 function HeroTeamSlot({
   slotRef,
-  priority = false,
 }: {
   slotRef?: React.Ref<HTMLDivElement>;
-  priority?: boolean;
 }) {
   return (
     <div
       ref={slotRef}
-      className="aspect-video relative block h-auto w-full overflow-hidden rounded-md bg-white shadow-md"
+      className="relative block aspect-[3/4] h-auto w-full overflow-hidden rounded-md bg-white shadow-md lg:aspect-video"
     >
       <HeroMainPhoto className="absolute inset-0" />
     </div>
@@ -113,7 +83,7 @@ function GalleryImage({
     // eslint-disable-next-line @next/next/no-img-element
     <img
       ref={imageRef}
-      className="aspect-video block h-auto max-h-full w-full rounded-md object-cover shadow-md"
+      className="block aspect-[3/4] h-auto max-h-full w-full rounded-md object-cover shadow-md lg:aspect-video"
       src={src}
       alt={alt}
       loading={priority ? "eager" : "lazy"}
@@ -143,25 +113,23 @@ export const GallerySection = forwardRef<
         )}
         aria-hidden
       >
-        <div className="flex h-svh items-start justify-center px-4 pt-[4vh] md:px-8 md:pt-[6vh]">
-          <div className="w-full max-w-[1600px]">
-            <div className="relative grid size-full grid-cols-3 gap-2">
-              <div className="relative -mt-2 flex w-full flex-col gap-2">
-                {IMAGES_1.map((_, i) => (
-                  <MeasureSlot key={`m1-${i}`} />
-                ))}
-              </div>
-              <div className="relative mt-[-50%] flex w-full flex-col gap-2">
-                <HeroTeamSlot slotRef={teamSlotRef} priority />
-                {IMAGES_2.map((src, i) => (
-                  <MeasureSlot key={`m2-${i}`} />
-                ))}
-              </div>
-              <div className="relative -mt-2 flex w-full flex-col gap-2">
-                {IMAGES_3.map((_, i) => (
-                  <MeasureSlot key={`m3-${i}`} />
-                ))}
-              </div>
+        <div className="h-svh">
+          <div className="relative grid size-full grid-cols-3 gap-2">
+            <div className="relative -mt-2 flex w-full flex-col gap-2">
+              {IMAGES_1.map((_, i) => (
+                <MeasureSlot key={`m1-${i}`} />
+              ))}
+            </div>
+            <div className="relative mt-[-50%] flex w-full flex-col gap-2">
+              <HeroTeamSlot slotRef={teamSlotRef} />
+              {IMAGES_2.map((_, i) => (
+                <MeasureSlot key={`m2-${i}`} />
+              ))}
+            </div>
+            <div className="relative -mt-2 flex w-full flex-col gap-2">
+              {IMAGES_3.map((_, i) => (
+                <MeasureSlot key={`m3-${i}`} />
+              ))}
             </div>
           </div>
         </div>
@@ -171,13 +139,12 @@ export const GallerySection = forwardRef<
 
   return (
     <section
-      ref={ref}
       data-black-surface
-      className={cn("relative bg-black", className)}
+      className={cn("relative bg-[#11120f]", className)}
       aria-label="Galería de sonrisas"
     >
-      <ContainerScroll className="relative z-10 h-[260vh]">
-        <ContainerSticky className="flex h-svh items-start justify-center px-4 pt-[4vh] md:px-8 md:pt-[6vh]">
+      <ContainerScroll className="relative z-10 h-[280svh] lg:h-[350vh]">
+        <ContainerSticky className="h-svh">
           <GalleryContainer>
             <GalleryCol yRange={["-10%", "2%"]} className="-mt-2">
               {IMAGES_1.map((src, i) => (
@@ -189,7 +156,7 @@ export const GallerySection = forwardRef<
               ))}
             </GalleryCol>
             <GalleryCol className="mt-[-50%]" yRange={["15%", "5%"]}>
-              <HeroTeamSlot priority />
+              <HeroTeamSlot />
               {IMAGES_2.map((src, i) => (
                 <GalleryImage
                   key={`s2-${i}`}
@@ -208,16 +175,9 @@ export const GallerySection = forwardRef<
               ))}
             </GalleryCol>
           </GalleryContainer>
-          <GalleryBottomFade />
         </ContainerSticky>
       </ContainerScroll>
 
-      {/* Tramo crema sólido — sin franja negra, enlaza con la 3ª sección */}
-      <div
-        aria-hidden
-        className="relative z-10 w-full bg-[#f2f2ea]"
-        style={{ height: GALLERY_CREAM_TAIL }}
-      />
     </section>
   );
 });
